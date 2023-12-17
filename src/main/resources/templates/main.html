@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="kr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/main.css">
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Alata&display=swap" rel="stylesheet">
+<!-- Full Calendar -->
+	<script src='/js/index.global.js'></script>
+	
+	<script th:inline="javascript">
+		document.addEventListener('DOMContentLoaded', function() {
+			var today = new Date();
+			
+			var year = today.getFullYear();
+			var month = today.getMonth() + 1;
+			var date = today.getDate();
+			var reservationData = /*[[${reservations}]]*/;
+			var eventsData = new Array();
+				
+			for(let item in reservationData){
+				let eventsInfo = new Object();
+				eventsInfo.title = reservationData[item].name;
+				eventsInfo.start = reservationData[item].reserve_date;
+				
+				eventsData.push(eventsInfo);
+			}
+			var calendarEl = document.getElementById('calendar');
+			
+			var calendar = new FullCalendar.Calendar(calendarEl, {
+		      initialDate: year+'-'+(("00"+month.toString()).slice(-2))+'-'+(("00"+date.toString()).slice(-2)),
+		      editable: false,
+		      selectable: false,
+		      businessHours: true,
+		      dayMaxEvents: true, // allow "more" link when too many events
+		      events: eventsData
+		    });
+	
+		    calendar.render();
+		    
+		    calendar.on('dateClick', function (info) {
+		        //alert('clicked on ' + info.dateStr);
+			});
+		});
+	</script>
+	
+	<script src="/js/main.js"></script>
+
+    <title>MAIN</title>
+</head>
+<body>
+	<div id="wrapper" class="wrapper">
+	 
+		<div class="title">
+	       	<h1>HAW</h1>
+		</div>
+		  		
+		<div class="login-btn-wrap">
+			<button class="login-btn" id="login-btn" onclick='moveLink("/web/logout")'>로그아웃</button>
+			<button class="join-btn" id="join-btn" onclick="moveLink('/form/doctor')">의사등록</button>
+		</div>
+		<div class="content-wrap">
+			<div class="calendar-wrap">
+			<!--달력-->
+				<div id="calendar" class="calendar"></div>
+			</div>
+			
+			<div class="content">
+				<div id="reservation" class="reservation">
+					<table id='reservationTable' class='reservationTable'>
+		               	<thead>
+		               		<tr>
+		               			<th style="width: 33%;">시간</th>
+		               			<th style="width: 33%;">이름</th>
+		               			<th style="width: 33%;">증상</th>
+		               		</tr>
+		               	</thead>
+		               	<tbody th:each="reservation, i : ${reservations}">
+		               		<tr th:if="${reservation.reserve_date == #calendars.format(#calendars.createNow(), 'yyyy-MM-dd')}">
+		               			<td style="width: 33%; text-align: center;" th:text="${reservation.reserve_time + ':00'}"></td>
+		               			<td style="width: 33%; text-align: center;" th:text="${reservation.name}"></td>
+		               			<td style="width: 33%; text-align: center;" th:text="${reservation.symptom}"></td>
+		               		</tr>
+		               	</tbody>
+		        	</table>
+				</div>
+					
+				<div class="Refusal_to_accept-btn-wrap">
+					<button class="Refusal_to_accept-btn" id="Refusal_to_accept-btn" onclick="moveLink('/web/reservation')">예약관리</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+</body>
+</html>

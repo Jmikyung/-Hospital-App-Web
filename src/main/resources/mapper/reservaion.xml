@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.grd.hosp.dao.ReservationMapper">
+	<select id="retreiveReservation" resultType="com.grd.hosp.dto.ReservationInqPrnReptSbDto">
+		SELECT A.RESERVE_NO
+			  ,A.MEMBER_ID
+			  ,A.HOSPITAL_MEMBER_ID
+			  ,FORMATDATETIME(A.RESERVE_DATE, 'yyyy-MM-dd') AS RESERVE_DATE 
+			  ,FORMATDATETIME(A.RESERVE_DATE, 'HH')  AS RESERVE_TIME
+			  ,A.ACCEPT
+			  ,A.SYMPTOM
+			  ,B.NAME
+			  ,C.NAME AS DOCTOR_NAME
+			  ,C.DEPT AS DOCTOR_DEPT
+			  ,D.NAME AS HOSPITAL_NAME
+		FROM RESERVATION A
+		JOIN MEMBER B
+		ON A.MEMBER_ID = B.ID
+		JOIN HOSPITAL_MEMBER C
+		ON C.MEMBER_ID= A.HOSPITAL_MEMBER_ID
+		JOIN HOSPITAL D
+		ON D.ID = C.HOSPITAL_ID
+		WHERE 1=1
+		<if test='hospitalId != null and hospitalId != ""'>
+			AND D.ID = #{hospitalId}
+		</if>
+		<if test='accept != null and accept != ""'>
+			AND A.ACCEPT = #{accept}
+		</if>
+		<if test='memberId != null and memberId != ""'>
+			AND A.MEMBER_ID = #{memberId}
+		</if>
+		ORDER BY RESERVE_DATE DESC
+	</select>
+	
+	<select id="retreiveReservationDate" parameterType="com.grd.hosp.dto.ReservationRegInpDto">
+		SELECT count(1)
+		FROM HOSPITAL_MEMBER A
+			,RESERVATION B
+		WHERE 1=1
+		AND   A.MEMBER_ID = B.HOSPITAL_MEMBER_ID
+		AND   A.MEMBER_ID = #{hospitalMemberId}
+		AND   B.RESERVE_DATE = PARSEDATETIME(FORMATDATETIME(PARSEDATETIME(#{reserveDate}, 'yyyy-MM-dd HH:mm:ss'), 'yyyy-MM-dd HH'), 'yyyy-MM-dd HH')
+	
+	</select>
+	
+	<insert id="registReservation" parameterType="com.grd.hosp.entity.ReservationEntity">
+		INSERT
+		  INTO RESERVATION(
+			   RESERVE_NO
+			  ,MEMBER_ID
+			  ,HOSPITAL_MEMBER_ID
+			  ,RESERVE_DATE
+			  ,ACCEPT
+			  ,SYMPTOM
+			  )
+	   VALUES (
+			   NVL((SELECT MAX(CONVERT(RESERVE_NO,INTEGER))+1 FROM RESERVATION), 0)
+			  ,#{memberId}
+			  ,#{hospitalMemberId}
+			  ,PARSEDATETIME(FORMATDATETIME(PARSEDATETIME(#{reserveDate}, 'yyyy-MM-dd HH:mm:ss'), 'yyyy-MM-dd HH'), 'yyyy-MM-dd HH')
+			  ,''
+			  ,#{symptom}
+			  )
+	</insert>
+	
+	<update id="updateReservation" parameterType="com.grd.hosp.entity.ReservationEntity">
+		UPDATE RESERVATION
+		   SET ACCEPT = #{accept}
+		WHERE RESERVE_NO = #{reserve_no}
+	</update>
+</mapper>

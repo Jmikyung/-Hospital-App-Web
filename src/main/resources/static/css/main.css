@@ -1,0 +1,61 @@
+.wrapper{
+	width:100%;
+}
+
+.title{
+	margin-left: 45%;
+}
+
+.login-btn-wrap{
+	text-align: right;
+  	width: 100%;
+}
+
+.login-btn{
+	margin: 10px;
+ 	width:95px;
+    height:30px;
+}
+
+.join-btn{
+	margin: 10px;
+	width:95px;
+    height:30px;
+}
+
+.content-wrap{
+	width: 100%;
+	justify-content:center;
+	display: inline-flex;
+}
+
+.calendar{
+    font-family: Arial, Helvetica Neue, Helvetica, sans-serif;
+}
+
+.calendar-wrap{
+	width:40%;
+	
+}
+
+.content{
+	width: 15%;
+	margin-left: 5%;
+}
+
+.reservationTable{
+	width: 100%;
+}
+
+.reservation{
+	width: 100%;
+	border: 4px dashed #bcbcbc;
+    font-size: 13px;
+    height: 90%;
+}
+
+.Refusal_to_accept-btn{
+ 	width:100%;
+    height:50px;
+    
+  }
